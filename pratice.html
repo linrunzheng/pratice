@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <name>name</name>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script type="text/javascript" src="./jquery.min.js"></script>
+   
+</head>
+<body>
+<div id="tree"></div>
+   
+</body>
+
+<script type="text/javascript">
+	var data=[
+				{
+					name:123,
+					children:[
+						{
+							name:453,children:[{name:789,children:[{name:"hahahqqq---qq"}]}]
+						},
+						{
+							name:"Cessihshis" 
+						}
+					]
+				},
+				{
+					name:"啊啊啊11",		
+				},
+			];
+
+			function render(treeJson,addDom){
+				if(!Array.isArray(treeJson)){return}
+				var ul=$("<ul>");
+				treeJson.forEach(function(item,i){
+					var li=$("<li><span class='treeName'>"+item.name+"</span></li>");
+					addDom&&addDom(li,item);
+					if(item.children&&item.children.length>0){
+						li.append(render(item.children,addDom))
+					}
+					ul.append(li);
+				})
+				return ul
+			}
+			var aaaaaa=render(data);
+
+			function add(el,treeData){
+				el.prepend("<input type='checkbox'>");
+			}
+			$("#tree").append(aaaaaa)
+
+
+
+
+	function deepCopy(obj){
+		var object;
+		if(Object.prototype.toString.call(obj)=="[object Array]"){		
+			object=[];
+			for(var i=0;i<obj.length;i++){
+				object.push(deepCopy(obj[i]))
+			}		
+			return object
+		}
+		if(Object.prototype.toString.call(obj)=="[object Object]"){		
+			object={};
+			for(var p in obj){
+				object[p]=obj[p]
+			}		
+			return object
+		}
+	}
+
+	// console.log(deepCopy(data))
+
+	
+	var transformToArrayFormat=function (nodes) {
+			var r=[];
+			if (Array.isArray(nodes)) {
+				for (var i=0, l=nodes.length; i<l; i++) {
+					r.push(nodes[i]);
+					if (nodes[i]["children"]&&Array.isArray(nodes[i]["children"])&&nodes[i]["children"].length>0)
+						r = r.concat(transformToArrayFormat(nodes[i]["children"]));
+					    delete nodes[i]["children"]
+				}
+			} 
+			return r;
+		}
+		/*console.log(transformToArrayFormat(data))*/
+
+
+
+var sNodes2 = [
+{"id":12122,"name":"第一级1"},
+{"id":2,"name":"第一级1","pid":0},
+{"id":3,"name":"第二级1","pid":2},
+{"id":4,"name":"第二级2","pid":2},
+{"id":5,"name":"第三级1","pid":4},
+{"id":100,"name":"第三级2","pid":3},
+{"id":101,"name":"第三级2","pid":3},
+{"id":6,"name":"第三级2","pid":3},
+{"id":60,"name":"第三级2","pid":6}
+];
+
+
+function arrayToJson(sNodes){
+	var r = [];
+	var tmpMap ={};
+	for (var i=0, l=sNodes.length; i<l; i++) {
+		tmpMap[sNodes[i]["id"]]= sNodes[i];	
+	}	
+
+	for (i=0, l=sNodes.length; i<l; i++) {
+		if (tmpMap[sNodes[i]["pid"]]) {
+			if (!tmpMap[sNodes[i]["pid"]]["children"])
+					tmpMap[sNodes[i]["pid"]]["children"] = [];
+					tmpMap[sNodes[i]["pid"]]["children"].push(sNodes[i]);
+			} else {
+				r.push(sNodes[i]);
+		}
+	}
+	return r
+}
+
+var abc=arrayToJson(deepCopy(sNodes2))
+/*console.log(abc)
+
+
+console.log(transformToArrayFormat(arrayToJson(deepCopy(sNodes2))))
+console.log(transformToArrayFormat(arrayToJson(deepCopy(sNodes2))))*/
+
+
+
+/*var person={
+	name:"test"
+}
+
+function clone(source) {
+    var obj = {};
+    for (var i in source) {
+        obj[i] = source[i];
+    }
+    return obj;
+}
+
+var newPerson=clone(person);
+newPerson.name=123;*/
+
+
+
+
+
+
+
+
+</script>
+</html>
