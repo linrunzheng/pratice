@@ -1,0 +1,134 @@
+var data = [
+  {"id":1},
+  {"id":2},
+  {"id":3},
+  {"id":4},
+  
+];
+
+var str="<ul>";
+
+data.forEach(function(v,i){
+   str+="<li><span>"+v.id+"</span></li>"
+})
+
+str="</ul>"
+
+$(doucment).append(str);
+
+
+
+
+
+
+
+
+
+var data2 = [
+    {"id":1,children:[{"id":"child11"},{"id":"child12"}]},
+    {"id":2},
+    {"id":3children:[{"id":"child31"},{"id":"child32"}]},
+    {"id":4}, 
+];
+
+
+var str="<ul>";
+
+data2.forEach(function(v,i){
+    if(v.children&&v.children.length>0){
+        str+="<li><span>"+v.id+"</span>";
+        str+="<ul>";
+        v.children.forEach(function(value,index){
+             str+="<li><span>"+value.id+"</span>";
+        })
+        str="</ul>";
+        str="</li>";
+
+    }else{
+        str+="<li><span>"+v.id+"</span></li>"
+    }  
+})
+str="</ul>"
+
+$(doucment).append(str);
+
+
+
+
+
+
+var json=[
+        {
+          name:123,id:1
+          children:[
+            {
+              name:453,id:456,children:[{name:789,id:777,children:[{name:"hahahqqq---qq",id:3232}]}]
+            },
+            {
+              name:"Cessihshis" , id:12121
+            }
+          ]
+        },
+        {
+          name:"啊啊啊11", id:12
+        },
+      ];
+      
+
+      function render(treeJson){   
+        if(!Array.isArray(treeJson)||treeJson.length<=0){return ""}   
+        var ul=$("<ul>");
+        treeJson.forEach(function(item,i){      
+          var li=$("<li><span class='treeName'>"+item.name+"</span></li>");
+          if(Array.isArray(item.children)&&item.children.length>0){
+            li.append(render(item.children))
+          }
+          ul.append(li);
+        })
+        return ul
+      }
+
+      $("#tree").append(render(json));
+
+      这样一来，一颗非常简陋的树就生成了，不过通常树都带有radio或者checkbox选择框，而且很多时候都需要对树的右侧进行拓展，比如加一些新增，编辑等按钮什么的，可以考虑多传一个对象作为参数。
+
+      var checkbox={
+        radio:"<label class='myTreeIcon'><input type='radio'  name='selectTreeRedio'><span></span></label>",
+
+        multi:"<input type='checkbox' name='selectTreeRedio'>"
+      }
+
+
+      function render(treeJson,option={type:0,expandDom:function(){}}){   
+         if(!Array.isArray(treeJson)||treeJson.length<=0){return ""}   
+          var {type,expandDom}=option;        
+          var ul=$("<ul>");
+          treeJson.forEach(function(item,i){
+            var str="";
+            if(type==1){
+              str+=checkbox.multi
+            }else if(type==2){
+              str+=checkbox.radio
+            }
+            var li=$("<li data-id='"+item+"'>"+str+"<span class='treeName'>"+item.name+"</span></li>");
+            expandDom&&expandDom(li,item);
+            if(item.children&&item.children.length>0){
+              li.append(render(item.children,option))
+            }
+            ul.append(li);
+        })
+        return ul
+      }
+
+      option使用了一个默认对象，默认为不需要选择框和不需要拓展， 如果传入的type为1或者2，则生成checkbox或者radio，由于radio样式比较丑，用label包起来自己模拟选中的效果；如果传入拓展参数，则把当前的父级li以及当前的参数传入，以便进行拓展。
+
+
+      $("#tree").append(render(json,{
+        type:1,
+        expandDom:function(el,data){
+          el.append("<button>编辑</button><button>测试</button><a data-msg='"+JSON.stringify(data)+"'></a>")
+        }
+      }))
+
+
+

@@ -3,15 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <name>name</name>
     <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <script type="text/javascript" src="./jquery.min.js"></script>
+   <style type="text/css">
    
+   	ul,li{list-style: none;}
+   	#tree .myTreeIcon span{display: inline-block;width:12px;height:12px;border:1px solid #bbb;position:relative;}
+	#tree [type="radio"]{display: none;}
+	#tree [type="radio"]:checked+span:before{content:"√";position: absolute;top:-4px;left:0px;width:10px;height:10px;color: red;}
+   </style>
 </head>
 <body>
 <div id="tree"></div>
    
 </body>
+
 
 <script type="text/javascript">
 	var data=[
@@ -30,26 +36,39 @@
 					name:"啊啊啊11",		
 				},
 			];
-
-			function render(treeJson,addDom){
-				if(!Array.isArray(treeJson)){return}
+			var checkbox={
+				radio:"<label class='myTreeIcon'><input type='radio' name='selectTreeRedio'><span></span></label>",
+				multi:"<input type='checkbox' name='selectTreeRedio'>"
+			}
+			function render(treeJson,option){		
+			/*	if(!Array.isArray(treeJson)){throw new Error("unSupport type")}*/
+				var {type,addDom}=option;				
 				var ul=$("<ul>");
 				treeJson.forEach(function(item,i){
-					var li=$("<li><span class='treeName'>"+item.name+"</span></li>");
+					var str="";
+					if(type==1){
+						str+=checkbox.multi
+					}else if(type==2){
+						str+=checkbox.raido
+					}
+					var li=$("<li>"+str+"<span class='treeName'>"+item.name+"</span></li>");
 					addDom&&addDom(li,item);
 					if(item.children&&item.children.length>0){
-						li.append(render(item.children,addDom))
+						li.append(render(item.children,option))
 					}
 					ul.append(li);
 				})
 				return ul
 			}
-			var aaaaaa=render(data);
+			var aaaaaa=render(data,{
+				type:1,
+				addDom
+			});
 
-			function add(el,treeData){
-				el.prepend("<input type='checkbox'>");
+			function addDom(el,treeData){
+				
 			}
-			$("#tree").append(aaaaaa)
+		/*	$("#tree").append(aaaaaa)*/
 
 
 
@@ -92,15 +111,10 @@
 
 
 var sNodes2 = [
-{"id":12122,"name":"第一级1"},
 {"id":2,"name":"第一级1","pid":0},
 {"id":3,"name":"第二级1","pid":2},
 {"id":4,"name":"第二级2","pid":2},
 {"id":5,"name":"第三级1","pid":4},
-{"id":100,"name":"第三级2","pid":3},
-{"id":101,"name":"第三级2","pid":3},
-{"id":6,"name":"第三级2","pid":3},
-{"id":60,"name":"第三级2","pid":6}
 ];
 
 
@@ -110,8 +124,9 @@ function arrayToJson(sNodes){
 	for (var i=0, l=sNodes.length; i<l; i++) {
 		tmpMap[sNodes[i]["id"]]= sNodes[i];	
 	}	
+	console.log(tmpMap)
 
-	for (i=0, l=sNodes.length; i<l; i++) {
+	/*for (i=0, l=sNodes.length; i<l; i++) {
 		if (tmpMap[sNodes[i]["pid"]]) {
 			if (!tmpMap[sNodes[i]["pid"]]["children"])
 					tmpMap[sNodes[i]["pid"]]["children"] = [];
@@ -120,7 +135,7 @@ function arrayToJson(sNodes){
 				r.push(sNodes[i]);
 		}
 	}
-	return r
+	return r*/
 }
 
 var abc=arrayToJson(deepCopy(sNodes2))
@@ -149,6 +164,115 @@ newPerson.name=123;*/
 
 
 
+var data = [
+  {"name":1},
+  {"name":2},
+  {"name":3},
+  {"name":4},  
+];
+
+var str="<ul>";
+data.forEach(function(v,i){
+   str+="<li><span>"+v.name+"</span></li>"
+})
+str+="</ul>"
+/*$("#tree").append(str);*/
+
+
+
+
+
+
+
+
+
+var data2 = [
+    {"name":1,children:[{"name":"child11"},{"name":"child12"}]},
+    {"name":2},
+    {"name":3,children:[{"name":"child31"},{"name":"child32"}]},
+    {"name":4}, 
+];
+
+
+var str="<ul>";
+
+data2.forEach(function(v,i){
+    if(v.children&&v.children.length>0){
+        str+="<li><span>"+v.name+"</span>";
+        str+="<ul>";
+        v.children.forEach(function(value,index){
+             str+="<li><span>"+value.name+"</span>";
+        })
+        str+="</ul>";
+        str+="</li>";
+
+    }else{
+        str+="<li><span>"+v.name+"</span></li>"
+    }  
+})
+str+="</ul>"
+
+
+/*$("#tree").append(str);*/
+
+
+
+
+
+
+var json=[
+    {
+          name:123,id:1,
+          children:[
+            {
+              name:453,id:456,children:[{name:789,id:777,children:[{name:"hahahqqq---qq",id:3232}]}]
+            },
+            {
+              name:"Cessihshis" , id:12121
+            }
+          ]
+        },
+        {
+          name:"啊啊啊11", id:12
+        },
+];
+      
+
+     
+
+  			var checkbox={
+				radio:"<label class='myTreeIcon'><input type='radio' name='selectTreeRedio'><span></span></label>",
+				multi:"<input type='checkbox' name='selectTreeRedio'>"
+			}
+			function render(treeJson,option={type:0,expandDom:function(){}}){		
+			   if(!Array.isArray(treeJson)||treeJson.length<=0){return ""}   
+				var {type,expandDom}=option;				
+				var ul=$("<ul>");
+				treeJson.forEach(function(item,i){
+					var str="";
+					if(type==1){
+						str+=checkbox.multi
+					}else if(type==2){
+						str+=checkbox.radio
+					}
+					var li=$("<li data-id='"+item.id+"'>"+str+"<span class='treeName'>"+item.name+"</span></li>");
+					expandDom&&expandDom(li,item);
+					if(item.children&&item.children.length>0){
+						li.append(render(item.children,option))
+					}
+					ul.append(li);
+				})
+				return ul
+			}
+			$("#tree").append(render(json,{
+				type:0,
+				expandDom:function(el,data){
+					el.append("<button>编辑</button><button>测试</button><a data-msg='"+JSON.stringify(data)+"'></a>")
+				}
+			}))
+
+
+     
 
 
 
